@@ -1,0 +1,19 @@
+[package]
+name = "my_todo_list"
+version = "1.0.0"
+authors = []
+
+[addresses]
+bio_addr = "0xba036648a53de7a993c3ea627453c43fa8f8b41acda5896b51c263a3d0d5f420"
+counter_addr = "0xba036648a53de7a993c3ea627453c43fa8f8b41acda5896b51c263a3d0d5f420"
+token_addr = "0xba036648a53de7a993c3ea627453c43fa8f8b41acda5896b51c263a3d0d5f420"
+voting_addr = "0xba036648a53de7a993c3ea627453c43fa8f8b41acda5896b51c263a3d0d5f420"
+
+[dev-addresses]
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-core.git"
+rev = "mainnet"
+subdir = "aptos-move/framework/aptos-framework"
+
+[dev-dependencies]
