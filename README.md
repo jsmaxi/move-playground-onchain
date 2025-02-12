@@ -1,37 +1,16 @@
-# Move Playground Onchain
+# Movement Playground Onchain
 
-Movement / Aptos blockchains
+An interactive development environment for experimenting with Move smart contracts on the Movement network. Write, audit, compile, and deploy smart contracts with integrated AI assistance.
 
-> backend :
+Built for both beginners and experienced Move developers.
 
-```
-cd move
-aptos init
-aptos move compile
-aptos move publish
-```
+### Quick Start
 
-OR:
-
-```
-cd move
-movement init
-movement move compile
-movement move publish
+```bash
+git clone https://github.com/jsmaxi/move-playground-onchain
+cd move-playground-onchain/client
+npm install
+npm run dev
 ```
 
-> frontend :
-
-```
-cd client
-npm --legacy-peer-deps i
-npm start
-```
-
-https://docs.movementnetwork.xyz/devs/tutorials/
-
-https://faucet.movementnetwork.xyz/?network=devnet
-
-https://explorer.movementnetwork.xyz/
-
-https://github.com/movementlabsxyz/onchain-bio-dapp
+Open [localhost:3000.](http://localhost:3000/).
