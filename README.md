@@ -24,8 +24,11 @@ git clone https://github.com/jsmaxi/move-playground-onchain
 cd move-playground-onchain/agent
 cargo install cargo-shuttle
 shuttle login
+shuttle project start
 shuttle run
 shuttle deploy
 ```
 
 Open [localhost:8000](http://127.0.0.1:8000/)
+
+Make sure that .shuttle folder is created in agent root with config.toml file and Shuttle project id set inside: `id = "proj..."`
