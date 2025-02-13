@@ -5,7 +5,7 @@ import { Editor } from "@/components/Editor";
 import { Sidebar } from "@/components/Sidebar";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/components/ui/use-toast";
-import { Copy, MessageCircle } from "lucide-react";
+import { Copy, MessageCircle, ZoomIn, ZoomOut } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import {
   Dialog,
@@ -102,6 +102,7 @@ const Index = () => {
   const [question, setQuestion] = useState("");
   const [isThinking, setIsThinking] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const [fontSize, setFontSize] = useState(14);
 
   const createContract = () => {
     const newContract: Contract = {
@@ -279,6 +280,14 @@ const Index = () => {
     scrollToBottom();
   }, [messages]);
 
+  const handleZoomIn = () => {
+    setFontSize((prev) => Math.min(prev + 2, 24));
+  };
+
+  const handleZoomOut = () => {
+    setFontSize((prev) => Math.max(prev - 2, 10));
+  };
+
   return (
     <div className="flex h-screen w-full bg-background">
       <Sidebar
@@ -312,14 +321,26 @@ const Index = () => {
                     </span>
                   )}
                 </div>
+
                 <Button variant="outline" size="sm" onClick={handleCopyCode}>
                   <Copy size={16} className="mr-2" />
                   Copy Code
                 </Button>
+
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={handleZoomIn}>
+                    <ZoomIn size={16} />
+                  </Button>
+
+                  <Button variant="outline" size="sm" onClick={handleZoomOut}>
+                    <ZoomOut size={16} />
+                  </Button>
+                </div>
               </div>
               <Editor
                 content={selectedContract.content}
                 onChange={updateContractContent}
+                fontSize={fontSize}
               />
             </>
           ) : (
