@@ -17,6 +17,11 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { postAudit, postCompile, postDeploy } from "@/lib/server";
 import Loading from "./Loading";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
 
 interface Contract {
   id: string;
@@ -106,6 +111,15 @@ const Index = () => {
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [fontSize, setFontSize] = useState(14);
   const [isLoading, setLoading] = useState(false);
+  const [logs, setLogs] = useState<string[]>([]);
+
+  const log = (logText: string) => {
+    setLogs((prev) => [...prev, `[${new Date().toLocaleString()}] ${logText}`]);
+  };
+
+  useEffect(() => {
+    log("Welcome! Here you can view system logs in real-time.");
+  }, []);
 
   const createContract = () => {
     const newContract: Contract = {
@@ -217,11 +231,13 @@ const Index = () => {
     try {
       setLoading(true);
       console.log(selectedContract);
+      log("Auditing...");
       const result = await postAudit(
         selectedContract.content,
         selectedContract.toml
       );
       console.log(result);
+      log("Audit response: " + result);
     } finally {
       setLoading(false);
     }
@@ -238,11 +254,13 @@ const Index = () => {
     try {
       setLoading(true);
       console.log(selectedContract);
+      log("Compiling...");
       const result = await postCompile(
         selectedContract.content,
         selectedContract.toml
       );
       console.log(result);
+      log("Compile response: " + result);
     } finally {
       setLoading(false);
     }
@@ -266,11 +284,13 @@ const Index = () => {
     try {
       setLoading(true);
       console.log(selectedContract);
+      log("Deploying...");
       const result = await postDeploy(
         selectedContract.content,
         selectedContract.toml
       );
       console.log(result);
+      log("Deploy response: " + result);
     } finally {
       setLoading(false);
     }
@@ -348,50 +368,77 @@ const Index = () => {
         onLoadExample={loadExampleContract}
       />
       <main className="flex flex-col flex-1 overflow-hidden">
-        <div className="flex-1 relative">
-          {selectedContract ? (
-            <>
-              <div className="absolute top-2 right-8 z-10 flex items-center gap-4">
-                <div className="text-sm text-muted-foreground">
-                  <span>{selectedContract.content.length} characters</span>
-                  {selectedContract.lastEdited && (
-                    <span className="ml-4">
-                      Last edited:{" "}
-                      {formatDistanceToNow(
-                        new Date(selectedContract.lastEdited),
-                        { addSuffix: true }
+        <ResizablePanelGroup direction="vertical" className="flex-1">
+          <ResizablePanel defaultSize={75} minSize={50}>
+            <div className="relative h-full">
+              {selectedContract ? (
+                <>
+                  <div className="absolute top-2 right-8 z-10 flex items-center gap-4">
+                    <div className="text-sm text-muted-foreground">
+                      <span>{selectedContract.content.length} characters</span>
+                      {selectedContract.lastEdited && (
+                        <span className="ml-4">
+                          Last edited:{" "}
+                          {formatDistanceToNow(
+                            new Date(selectedContract.lastEdited),
+                            { addSuffix: true }
+                          )}
+                        </span>
                       )}
-                    </span>
-                  )}
+                    </div>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleCopyCode}
+                    >
+                      <Copy size={16} className="mr-2" />
+                      Copy Code
+                    </Button>
+
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleZoomIn}
+                      >
+                        <ZoomIn size={16} />
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleZoomOut}
+                      >
+                        <ZoomOut size={16} />
+                      </Button>
+                    </div>
+                  </div>
+                  <Editor
+                    content={selectedContract.content}
+                    onChange={updateContractContent}
+                    fontSize={fontSize}
+                  />
+                </>
+              ) : (
+                <div className="flex h-full items-center justify-center text-muted-foreground">
+                  Select or create a contract to start coding
                 </div>
-
-                <Button variant="outline" size="sm" onClick={handleCopyCode}>
-                  <Copy size={16} className="mr-2" />
-                  Copy Code
-                </Button>
-
-                <div className="flex gap-2">
-                  <Button variant="outline" size="sm" onClick={handleZoomIn}>
-                    <ZoomIn size={16} />
-                  </Button>
-
-                  <Button variant="outline" size="sm" onClick={handleZoomOut}>
-                    <ZoomOut size={16} />
-                  </Button>
-                </div>
-              </div>
-              <Editor
-                content={selectedContract.content}
-                onChange={updateContractContent}
-                fontSize={fontSize}
-              />
-            </>
-          ) : (
-            <div className="flex h-full items-center justify-center text-muted-foreground">
-              Select or create a contract to start coding
+              )}
             </div>
-          )}
-        </div>
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={25} minSize={10} maxSize={50}>
+            <div className="h-full bg-editor-bg p-4 font-mono text-sm text-editor-text overflow-auto">
+              {logs.map((log, index) => (
+                <div key={index} className="mb-1">
+                  {log}
+                </div>
+              ))}
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
+
         <div className="grid grid-cols-3 gap-4 bg-muted border-t border-border p-2">
           <Button
             className="py-4 text-base border-r-2 border-gray-300 rounded-none"
