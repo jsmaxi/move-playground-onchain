@@ -120,7 +120,7 @@ async fn compile_contract(Json(_payload): Json<ContractCode>) -> Json<CompileRes
     // move_toml_file.write_all(payload.move_toml.as_bytes()).unwrap();
     let contract_file = NamedTempFile::new().unwrap();
 
-    let output = Command::new("movement")
+    let output = Command::new("aptos")
         .arg("move")
         .arg("compile")
         .arg("--package-dir")
@@ -144,7 +144,7 @@ async fn deploy_contract(Json(_payload): Json<ContractCode>) -> Json<DeployRespo
     // move_toml_file.write_all(payload.move_toml.as_bytes()).unwrap();
     let contract_file = NamedTempFile::new().unwrap();
 
-    let output = Command::new("movement")
+    let output = Command::new("aptos")
         .arg("move")
         .arg("publish")
         .arg("--package-dir")
@@ -162,7 +162,7 @@ async fn deploy_contract(Json(_payload): Json<ContractCode>) -> Json<DeployRespo
 }
 
 async fn movement() -> impl IntoResponse {
-    let output = Command::new("movement").arg("move").arg("--help").output();
+    let output = Command::new("aptos").arg("move").arg("--help").output();
     match output {
         Ok(o) => {
             let status: String = if o.status.success() {

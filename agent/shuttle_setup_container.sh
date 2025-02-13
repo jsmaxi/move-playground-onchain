@@ -22,17 +22,30 @@ echo "Verifying installations..."
 git --version
 cargo --version
 
-# Install build tools for movement cli
-echo "Installing build tools..."
-apt-get install -y lld clang build-essential
-apt-get install -y libdw-dev
-apt-get install -y pkg-config libssl-dev
+# # Install build tools for movement cli
+# echo "Installing build tools..."
+# apt-get install -y lld clang build-essential
+# apt-get install -y libdw-dev
+# apt-get install -y pkg-config libssl-dev
 
-# Install movement cli: https://docs.movementnetwork.xyz/devs/movementcli
-echo "Installing Movement CLI..."
-git clone https://github.com/movementlabsxyz/aptos-core/ && cd aptos-core
-cargo build -p movement
-cp target/debug/movement /usr/local/bin/
-movement --help
+# # Install movement cli: https://docs.movementnetwork.xyz/devs/movementcli
+# echo "Installing Movement CLI..."
+# git clone https://github.com/movementlabsxyz/aptos-core/ && cd aptos-core
+# cargo build -p movement
+# cp target/debug/movement /usr/local/bin/
+# movement --help
+
+echo "Set up aptos cli..."
+git clone https://github.com/aptos-labs/aptos-core.git
+cd aptos-core
+git checkout -f -b aptos-cli-v3.4.1  --track origin/devnet # version <= 3.5 for movement
+git status
+./scripts/dev_setup.sh
+source ~/.cargo/env
+# cargo build
+cargo build --package aptos --profile cli
+cp target/cli/aptos /usr/local/bin/
+aptos --help
+echo "Done with aptos cli"
 
 echo "Installation done"
