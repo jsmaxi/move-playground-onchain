@@ -26,6 +26,7 @@ cargo --version
 echo "Installing build tools..."
 apt-get install -y lld clang build-essential
 apt-get install -y libdw-dev
+apt-get install -y pkg-config libssl-dev
 
 # Install movement cli: https://docs.movementnetwork.xyz/devs/movementcli
 echo "Installing Movement CLI..."
