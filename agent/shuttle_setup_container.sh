@@ -23,8 +23,9 @@ git --version
 cargo --version
 
 # Install build tools for movement cli
-apt-get install lld clang build-essential
-apt-get install libdw-dev
+echo "Installing build tools..."
+apt-get install -y lld clang build-essential
+apt-get install -y libdw-dev
 
 # Install movement cli: https://docs.movementnetwork.xyz/devs/movementcli
 echo "Installing Movement CLI..."
