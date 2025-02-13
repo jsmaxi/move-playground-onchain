@@ -1,5 +1,7 @@
 "use server";
 
+import { ContractCode } from "./models";
+
 async function POST(request: string, url: string) {
   try {
     if (!url) throw "Invalid endpoint url";
@@ -19,14 +21,27 @@ async function POST(request: string, url: string) {
 
     const result = await apiResponse.json();
     console.error("Success:", result);
-    return Response.json({ success: true, data: result });
+    return result;
   } catch (error: any) {
     console.error("API route error:", error);
-    return Response.json({ success: false, error: error?.message });
+    return error;
   }
 }
 
-export async function postAudit(request: string) {
+export async function postAudit(code: string, move_toml: string) {
+  const cc: ContractCode = { code, move_toml };
   const url = process.env.AUDIT_API_URL ?? "";
-  return await POST(request, url);
+  return await POST(JSON.stringify(cc), url);
+}
+
+export async function postCompile(code: string, move_toml: string) {
+  const cc: ContractCode = { code, move_toml };
+  const url = process.env.COMPILE_API_URL ?? "";
+  return await POST(JSON.stringify(cc), url);
+}
+
+export async function postDeploy(code: string, move_toml: string) {
+  const cc: ContractCode = { code, move_toml };
+  const url = process.env.DEPLOY_API_URL ?? "";
+  return await POST(JSON.stringify(cc), url);
 }

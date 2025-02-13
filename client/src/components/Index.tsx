@@ -15,6 +15,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { postAudit, postCompile, postDeploy } from "@/lib/server";
+import Loading from "./Loading";
 
 interface Contract {
   id: string;
@@ -103,6 +105,7 @@ const Index = () => {
   const [isThinking, setIsThinking] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [fontSize, setFontSize] = useState(14);
+  const [isLoading, setLoading] = useState(false);
 
   const createContract = () => {
     const newContract: Contract = {
@@ -162,75 +165,115 @@ const Index = () => {
     updateContractContent(content);
   };
 
-  const handleAudit = () => {
+  const handleAudit = async () => {
+    // const dummyVulnerabilities = [
+    //   {
+    //     severity: "High",
+    //     description: "Missing access control on critical function",
+    //     location: "Line 15",
+    //   },
+    //   {
+    //     severity: "Medium",
+    //     description: "Potential integer overflow in arithmetic operation",
+    //     location: "Line 23",
+    //   },
+    //   {
+    //     severity: "Low",
+    //     description: "Consider adding event emission for state changes",
+    //     location: "Line 8",
+    //   },
+    // ];
+
+    // toast({
+    //   title: "Smart Contract Audit Results",
+    //   description: (
+    //     <div className="mt-2 space-y-2">
+    //       {dummyVulnerabilities.map((vuln, i) => (
+    //         <div key={i} className="flex items-start gap-2 text-sm">
+    //           <span
+    //             className={`font-medium ${
+    //               vuln.severity === "High"
+    //                 ? "text-red-500"
+    //                 : vuln.severity === "Medium"
+    //                 ? "text-yellow-500"
+    //                 : "text-blue-500"
+    //             }`}
+    //           >
+    //             {vuln.severity}:
+    //           </span>
+    //           <div className="flex-1">
+    //             <p>{vuln.description}</p>
+    //             <p className="text-xs text-muted-foreground">{vuln.location}</p>
+    //           </div>
+    //         </div>
+    //       ))}
+    //     </div>
+    //   ),
+    //   duration: 10000,
+    // });
+
     if (!selectedContract) return;
 
-    const dummyVulnerabilities = [
-      {
-        severity: "High",
-        description: "Missing access control on critical function",
-        location: "Line 15",
-      },
-      {
-        severity: "Medium",
-        description: "Potential integer overflow in arithmetic operation",
-        location: "Line 23",
-      },
-      {
-        severity: "Low",
-        description: "Consider adding event emission for state changes",
-        location: "Line 8",
-      },
-    ];
-
-    toast({
-      title: "Smart Contract Audit Results",
-      description: (
-        <div className="mt-2 space-y-2">
-          {dummyVulnerabilities.map((vuln, i) => (
-            <div key={i} className="flex items-start gap-2 text-sm">
-              <span
-                className={`font-medium ${
-                  vuln.severity === "High"
-                    ? "text-red-500"
-                    : vuln.severity === "Medium"
-                    ? "text-yellow-500"
-                    : "text-blue-500"
-                }`}
-              >
-                {vuln.severity}:
-              </span>
-              <div className="flex-1">
-                <p>{vuln.description}</p>
-                <p className="text-xs text-muted-foreground">{vuln.location}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      ),
-      duration: 10000,
-    });
+    try {
+      setLoading(true);
+      console.log(selectedContract);
+      const result = await postAudit(
+        selectedContract.content,
+        selectedContract.toml
+      );
+      console.log(result);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleCompile = () => {
-    toast({
-      title: "Compiling Smart Contract",
-      description: "Contract compiled successfully.",
-    });
+  const handleCompile = async () => {
+    // toast({
+    //   title: "Compiling Smart Contract",
+    //   description: "Contract compiled successfully.",
+    // });
+
+    if (!selectedContract) return;
+
+    try {
+      setLoading(true);
+      console.log(selectedContract);
+      const result = await postCompile(
+        selectedContract.content,
+        selectedContract.toml
+      );
+      console.log(result);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDeploy = () => {
-    const newTransaction: Transaction = {
-      hash: `0x${Math.random().toString(16).substr(2, 64)}`,
-      timestamp: new Date().toISOString(),
-      status: "pending",
-    };
-    setTransactions([newTransaction, ...transactions]);
+  const handleDeploy = async () => {
+    // const newTransaction: Transaction = {
+    //   hash: `0x${Math.random().toString(16).substr(2, 64)}`,
+    //   timestamp: new Date().toISOString(),
+    //   status: "pending",
+    // };
+    // setTransactions([newTransaction, ...transactions]);
 
-    toast({
-      title: "Deploying Smart Contract",
-      description: "Please connect your wallet to deploy the contract.",
-    });
+    // toast({
+    //   title: "Deploying Smart Contract",
+    //   description: "Please connect your wallet to deploy the contract.",
+    // });
+
+    if (!selectedContract) return;
+
+    try {
+      setLoading(true);
+      console.log(selectedContract);
+      const result = await postDeploy(
+        selectedContract.content,
+        selectedContract.toml
+      );
+      console.log(result);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCopyCode = () => {
@@ -354,21 +397,27 @@ const Index = () => {
             className="py-4 text-base border-r-2 border-gray-300 rounded-none"
             variant="ghost"
             onClick={handleAudit}
+            disabled={isLoading}
           >
+            {isLoading && <Loading />}
             Audit
           </Button>
           <Button
             className="py-4 text-base border-r-2 border-gray-300 rounded-none"
             variant="ghost"
             onClick={handleCompile}
+            disabled={isLoading}
           >
+            {isLoading && <Loading />}
             Compile
           </Button>
           <Button
             className="py-4 text-base border-gray-300 rounded-none"
             variant="ghost"
             onClick={handleDeploy}
+            disabled={isLoading}
           >
+            {isLoading && <Loading />}
             Deploy
           </Button>
         </div>
