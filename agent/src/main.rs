@@ -11,8 +11,13 @@ use genai::{
 };
 use serde::{Deserialize, Serialize};
 use shuttle_runtime::SecretStore;
-use std::{env, process::Command};
-use tempfile::NamedTempFile;
+use std::{
+    env,
+    fs::{self, File},
+    io::Write,
+    process::Command,
+};
+// use tempfile::NamedTempFile;
 
 #[derive(Serialize, Deserialize)]
 struct ContractCode {
@@ -30,15 +35,15 @@ struct VulnerabilitiesResponse {
     vulnerabilities: Vec<String>,
 }
 
-#[derive(Serialize, Deserialize)]
-struct CompileResponse {
-    status: String,
-}
+// #[derive(Serialize, Deserialize)]
+// struct CompileResponse {
+//     status: String,
+// }
 
-#[derive(Serialize, Deserialize)]
-struct DeployResponse {
-    status: String,
-}
+// #[derive(Serialize, Deserialize)]
+// struct DeployResponse {
+//     status: String,
+// }
 
 #[derive(Serialize)]
 struct Error {
@@ -100,65 +105,150 @@ async fn not_found() -> impl IntoResponse {
 }
 
 async fn audit_contract(Json(_payload): Json<ContractCode>) -> Json<VulnerabilitiesResponse> {
-    // let prompt = format!(
-    //     "Audit the following smart contract code for vulnerabilities:\n{}",
-    //     payload.code
-    // );
-    //let client = OpenAIClient::new("your-openai-api-key");
-    //let response = client.complete(prompt).await.unwrap();
-    //let vulnerabilities = response.choices[0].text.split('\n').map(|s| s.to_string()).collect();
     let audit_response = audit(_payload.code).await;
     println!("Audit response: {}", audit_response);
     let vulnerabilities = vec![];
     Json(VulnerabilitiesResponse { vulnerabilities })
 }
 
-async fn compile_contract(Json(_payload): Json<ContractCode>) -> Json<CompileResponse> {
-    // let mut contract_file = NamedTempFile::new().unwrap();
-    // let mut move_toml_file = NamedTempFile::new().unwrap();
-    // contract_file.write_all(payload.code.as_bytes()).unwrap();
-    // move_toml_file.write_all(payload.move_toml.as_bytes()).unwrap();
-    let contract_file = NamedTempFile::new().unwrap();
+async fn compile_contract(Json(_payload): Json<ContractCode>) -> impl IntoResponse {
+    if _payload.code.trim().is_empty() {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json("Empty code".to_string()),
+        );
+    }
+
+    if _payload.move_toml.trim().is_empty() {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json("Empty manifest".to_string()),
+        );
+    }
+
+    // Create a new temporary directory
+    let temp_dir = tempfile::tempdir().unwrap();
+
+    // Create a new folder inside the temporary directory
+    let new_folder = temp_dir.path().join("new_folder");
+    fs::create_dir(&new_folder).unwrap();
+
+    // Create Move.toml file inside the new folder
+    let move_toml_path = new_folder.join("Move.toml");
+    let mut move_toml_file = File::create(&move_toml_path).unwrap();
+    move_toml_file.write_all(b"manifest").unwrap();
+
+    // Create sources folder inside the new folder
+    let sources_folder = new_folder.join("sources");
+    fs::create_dir(&sources_folder).unwrap();
+
+    // Create contract.move file inside the sources folder
+    let contract_move_path = sources_folder.join("contract.move");
+    let mut contract_move_file = File::create(&contract_move_path).unwrap();
+    contract_move_file.write_all(b"hello").unwrap();
+
+    println!(
+        "Contract files and folders created at: {:?}",
+        temp_dir.path()
+    );
+
+    // The temporary directory and its contents will be automatically deleted when `temp_dir` goes out of scope
 
     let output = Command::new("aptos")
         .arg("move")
         .arg("compile")
         .arg("--package-dir")
-        .arg(contract_file.path().parent().unwrap())
-        .output()
-        .unwrap();
+        .arg(temp_dir.path())
+        .output();
 
-    let status = if output.status.success() {
-        "success".to_string()
-    } else {
-        String::from_utf8_lossy(&output.stderr).to_string()
-    };
+    match output {
+        Ok(o) => {
+            let status: String = if o.status.success() {
+                String::from_utf8_lossy(&o.stdout).to_string()
+            } else {
+                String::from_utf8_lossy(&o.stderr).to_string()
+            };
 
-    Json(CompileResponse { status })
+            (StatusCode::OK, Json(status))
+        }
+        Err(error) => {
+            println!("Compile command error: {}", error);
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json("Command error".to_string()),
+            )
+        }
+    }
 }
 
-async fn deploy_contract(Json(_payload): Json<ContractCode>) -> Json<DeployResponse> {
-    //let mut contract_file = NamedTempFile::new().unwrap();
-    //let mut move_toml_file = NamedTempFile::new().unwrap();
-    // contract_file.write_all(payload.code.as_bytes()).unwrap();
-    // move_toml_file.write_all(payload.move_toml.as_bytes()).unwrap();
-    let contract_file = NamedTempFile::new().unwrap();
+async fn deploy_contract(Json(_payload): Json<ContractCode>) -> impl IntoResponse {
+    if _payload.code.trim().is_empty() {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json("Empty code".to_string()),
+        );
+    }
+
+    if _payload.move_toml.trim().is_empty() {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json("Empty manifest".to_string()),
+        );
+    }
+
+    // Create a new temporary directory
+    let temp_dir = tempfile::tempdir().unwrap();
+
+    // Create a new folder inside the temporary directory
+    let new_folder = temp_dir.path().join("new_folder");
+    fs::create_dir(&new_folder).unwrap();
+
+    // Create Move.toml file inside the new folder
+    let move_toml_path = new_folder.join("Move.toml");
+    let mut move_toml_file = File::create(&move_toml_path).unwrap();
+    move_toml_file.write_all(b"manifest").unwrap();
+
+    // Create sources folder inside the new folder
+    let sources_folder = new_folder.join("sources");
+    fs::create_dir(&sources_folder).unwrap();
+
+    // Create contract.move file inside the sources folder
+    let contract_move_path = sources_folder.join("contract.move");
+    let mut contract_move_file = File::create(&contract_move_path).unwrap();
+    contract_move_file.write_all(b"hello").unwrap();
+
+    println!(
+        "Contract files and folders created at: {:?}",
+        temp_dir.path()
+    );
+
+    // The temporary directory and its contents will be automatically deleted when `temp_dir` goes out of scope
 
     let output = Command::new("aptos")
         .arg("move")
         .arg("publish")
         .arg("--package-dir")
-        .arg(contract_file.path().parent().unwrap())
-        .output()
-        .unwrap();
+        .arg(temp_dir.path())
+        .output();
 
-    let status = if output.status.success() {
-        "success".to_string()
-    } else {
-        String::from_utf8_lossy(&output.stderr).to_string()
-    };
+    match output {
+        Ok(o) => {
+            let status: String = if o.status.success() {
+                String::from_utf8_lossy(&o.stdout).to_string()
+            } else {
+                String::from_utf8_lossy(&o.stderr).to_string()
+            };
 
-    Json(DeployResponse { status })
+            (StatusCode::OK, Json(status))
+        }
+        Err(error) => {
+            println!("Deploy command error: {}", error);
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json("Command error".to_string()),
+            )
+        }
+    }
 }
 
 async fn movement() -> impl IntoResponse {
