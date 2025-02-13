@@ -17,6 +17,17 @@ npm run dev
 
 Open [localhost:3000](http://localhost:3000/)
 
+Create .env file in client root and set environment variables according to the example:
+
+```
+AUDIT_API_URL = ""
+CHAT_API_URL = ""
+COMPILE_API_URL = ""
+DEPLOY_API_URL = ""
+```
+
+Fill with Shuttle local or remote endpoint URLs.
+
 > Agent
 
 ```bash
