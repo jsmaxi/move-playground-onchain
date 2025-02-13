@@ -32,3 +32,5 @@ shuttle deploy
 Open [localhost:8000](http://127.0.0.1:8000/)
 
 Make sure that .shuttle folder is created in agent root with config.toml file and Shuttle project id set inside: `id = "proj..."`
+
+Also make sure to create Secrets.toml file in agent root and set environment variable inside of it: `OPENAI_API_KEY = "your-api-key"`
