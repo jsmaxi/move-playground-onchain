@@ -56,8 +56,6 @@ source ~/.cargo/env
 cargo build --package aptos --profile cli
 cp target/cli/aptos /usr/local/bin/
 aptos --help
-echo -e "\n" | aptos init
-aptos account fund-with-faucet --account default
 echo "Done with aptos cli"
 
 echo "Installation done"
