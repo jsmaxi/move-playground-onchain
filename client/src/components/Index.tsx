@@ -308,7 +308,7 @@ const Index = () => {
         <div className="flex-1 relative">
           {selectedContract ? (
             <>
-              <div className="absolute top-2 right-2 z-10 flex items-center gap-4">
+              <div className="absolute top-2 right-8 z-10 flex items-center gap-4">
                 <div className="text-sm text-muted-foreground">
                   <span>{selectedContract.content.length} characters</span>
                   {selectedContract.lastEdited && (
@@ -349,23 +349,23 @@ const Index = () => {
             </div>
           )}
         </div>
-        <div className="grid grid-cols-3 gap-4 bg-muted border-t border-border p-4">
+        <div className="grid grid-cols-3 gap-4 bg-muted border-t border-border p-2">
           <Button
-            className="py-4 text-base"
+            className="py-4 text-base border-r-2 border-gray-300 rounded-none"
             variant="ghost"
             onClick={handleAudit}
           >
             Audit
           </Button>
           <Button
-            className="py-4 text-base"
+            className="py-4 text-base border-r-2 border-gray-300 rounded-none"
             variant="ghost"
             onClick={handleCompile}
           >
             Compile
           </Button>
           <Button
-            className="py-4 text-base"
+            className="py-4 text-base border-gray-300 rounded-none"
             variant="ghost"
             onClick={handleDeploy}
           >
@@ -378,7 +378,7 @@ const Index = () => {
             <Button
               variant="outline"
               size="icon"
-              className="fixed bottom-20 right-4 h-12 w-12 rounded-full shadow-lg"
+              className="fixed bottom-20 right-8 h-12 w-12 rounded-full shadow-lg"
             >
               <MessageCircle className="h-6 w-6" />
             </Button>
