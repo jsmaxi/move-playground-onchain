@@ -103,6 +103,14 @@ export const Sidebar = ({
     );
   };
 
+  const getBgColor = (isActive: boolean) => {
+    if (isActive) {
+      return theme === "dark" ? "bg-gray-600" : "hover:bg-gray-100";
+    } else {
+      return theme === "dark" ? "bg-gray-800" : "hover:bg-gray-50";
+    }
+  };
+
   return (
     <div className="flex h-full w-64 flex-col border-r border-gray-200 bg-background text-foreground p-4">
       <div className="flex items-center gap-2 mb-4 cursor-pointer">
@@ -168,7 +176,11 @@ export const Sidebar = ({
                   key={contract.id}
                   className={`group relative rounded-md p-2 ${
                     selectedContract?.id === contract.id
-                      ? "bg-gray-100"
+                      ? theme === "dark"
+                        ? "bg-gray-600"
+                        : "bg-gray-100"
+                      : theme === "dark"
+                      ? "hover:bg-gray-800"
                       : "hover:bg-gray-50"
                   }`}
                 >
@@ -292,9 +304,9 @@ export const Sidebar = ({
               {accounts.map((account) => (
                 <div
                   key={account.publicKey}
-                  className={`flex items-center justify-between p-2 rounded-md cursor-pointer ${
-                    account.isActive ? "bg-gray-100" : "hover:bg-gray-50"
-                  }`}
+                  className={`flex items-center justify-between p-2 rounded-md cursor-pointer ${getBgColor(
+                    account.isActive
+                  )}`}
                 >
                   <div
                     className="flex items-center gap-2 flex-1"
