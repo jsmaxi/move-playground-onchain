@@ -43,6 +43,7 @@ apt-get install -y build-essential
 apt-get install -y llvm
 apt-get install -y clang
 apt-get install -y lld
+apt-get install -y libudev-dev
 
 echo "Set up aptos cli..."
 git clone https://github.com/aptos-labs/aptos-core.git
