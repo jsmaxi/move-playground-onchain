@@ -15,7 +15,6 @@ import {
   Github,
   Sun,
   Moon,
-  //   Play,
 } from "lucide-react";
 import {
   Select,
@@ -24,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Image from "next/image";
 
 interface Contract {
   id: string;
@@ -105,9 +105,9 @@ export const Sidebar = ({
 
   return (
     <div className="flex h-full w-64 flex-col border-r border-gray-200 bg-background text-foreground p-4">
-      <div className="flex items-center gap-2 mb-4">
-        {/* <Play className="text-primary h-5 w-5" /> */}
-        <h1 className="text-lg font-semibold leading-tight">
+      <div className="flex items-center gap-2 mb-4 cursor-pointer">
+        <Image src={"/logo.png"} alt="Logo" width={64} height={64} />
+        <h1 className="text-lg font-semibold leading-tight text-yellow-400 drop-shadow-[1.2px_1.2px_1.2px_rgba(0,0,0,0.8)]">
           Movement Playground Onchain
         </h1>
       </div>
