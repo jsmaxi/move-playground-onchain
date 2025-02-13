@@ -14,8 +14,8 @@ use shuttle_runtime::SecretStore;
 use std::{
     env,
     fs::{self, File},
-    io::Write,
-    process::Command,
+    io::{BufRead, BufReader, Write},
+    process::{Command, Stdio},
 };
 // use tempfile::NamedTempFile;
 
@@ -161,25 +161,56 @@ async fn compile_contract(Json(_payload): Json<ContractCode>) -> impl IntoRespon
 
     // The temporary directory and its contents will be automatically deleted when `temp_dir` goes out of scope
 
-    let output = Command::new("aptos")
+    println!("Execute command");
+
+    let mut child = Command::new("aptos")
         .arg("move")
         .arg("compile")
         .arg("--package-dir")
-        .arg(temp_dir.path())
-        .output()
-        .unwrap();
+        .arg(new_folder)
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .expect("Failed to spawn child for command");
 
-    if output.status.success() {
-        (
-            StatusCode::OK,
-            Json(String::from_utf8_lossy(&output.stdout).to_string()),
-        )
-    } else {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(String::from_utf8_lossy(&output.stderr).to_string()),
-        )
-    }
+    // Capture stdout and stderr
+    let stdout = child.stdout.take().unwrap();
+    let stderr = child.stderr.take().unwrap();
+
+    let stdout_handle = std::thread::spawn(move || {
+        let reader = BufReader::new(stdout);
+        let mut output = String::new();
+        for line in reader.lines() {
+            if let Ok(line) = line {
+                println!("stdout: {}", line);
+                output.push_str(&line);
+                output.push('\n');
+            }
+        }
+        output
+    });
+
+    let _stderr_handle = std::thread::spawn(move || {
+        let reader = BufReader::new(stderr);
+        let mut output = String::new();
+        for line in reader.lines() {
+            if let Ok(line) = line {
+                eprintln!("stderr: {}", line);
+                output.push_str(&line);
+                output.push('\n');
+            }
+        }
+        output
+    });
+
+    // Wait for the child process to finish
+    let _status = child.wait().expect("Failed to wait on child");
+
+    // Join the threads to get the output
+    let stdout_output = stdout_handle.join().unwrap();
+    //let stderr_output = stderr_handle.join().unwrap();
+
+    (StatusCode::OK, Json(stdout_output))
 }
 
 async fn deploy_contract(Json(_payload): Json<ContractCode>) -> impl IntoResponse {
@@ -231,25 +262,56 @@ async fn deploy_contract(Json(_payload): Json<ContractCode>) -> impl IntoRespons
 
     // The temporary directory and its contents will be automatically deleted when `temp_dir` goes out of scope
 
-    let output = Command::new("aptos")
+    println!("Execute command");
+
+    let mut child = Command::new("aptos")
         .arg("move")
         .arg("publish")
         .arg("--package-dir")
-        .arg(temp_dir.path())
-        .output()
-        .unwrap();
+        .arg(new_folder)
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .expect("Failed to spawn child for command");
 
-    if output.status.success() {
-        (
-            StatusCode::OK,
-            Json(String::from_utf8_lossy(&output.stdout).to_string()),
-        )
-    } else {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR,
-            Json(String::from_utf8_lossy(&output.stderr).to_string()),
-        )
-    }
+    // Capture stdout and stderr
+    let stdout = child.stdout.take().unwrap();
+    let stderr = child.stderr.take().unwrap();
+
+    let stdout_handle = std::thread::spawn(move || {
+        let reader = BufReader::new(stdout);
+        let mut output = String::new();
+        for line in reader.lines() {
+            if let Ok(line) = line {
+                println!("stdout: {}", line);
+                output.push_str(&line);
+                output.push('\n');
+            }
+        }
+        output
+    });
+
+    let _stderr_handle = std::thread::spawn(move || {
+        let reader = BufReader::new(stderr);
+        let mut output = String::new();
+        for line in reader.lines() {
+            if let Ok(line) = line {
+                eprintln!("stderr: {}", line);
+                output.push_str(&line);
+                output.push('\n');
+            }
+        }
+        output
+    });
+
+    // Wait for the child process to finish
+    let _status = child.wait().expect("Failed to wait on child");
+
+    // Join the threads to get the output
+    let stdout_output = stdout_handle.join().unwrap();
+    //let stderr_output = stderr_handle.join().unwrap();
+
+    (StatusCode::OK, Json(stdout_output))
 }
 
 async fn movement() -> impl IntoResponse {
