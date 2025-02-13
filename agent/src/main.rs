@@ -262,6 +262,24 @@ async fn deploy_contract(Json(_payload): Json<ContractCode>) -> impl IntoRespons
 
     // The temporary directory and its contents will be automatically deleted when `temp_dir` goes out of scope
 
+    println!("Init");
+
+    let mut _child = Command::new("aptos")
+        .arg("init")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .expect("Failed to spawn child for init");
+
+    // Get stdin handle
+    if let Some(mut stdin) = _child.stdin.take() {
+        // Send newline character to accept default values
+        stdin.write_all(b"\n").unwrap();
+    }
+
+    let _output = _child.wait_with_output().unwrap();
+
     println!("Execute command");
 
     let mut child = Command::new("aptos")

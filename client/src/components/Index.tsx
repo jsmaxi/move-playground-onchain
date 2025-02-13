@@ -48,14 +48,13 @@ version = "1.0.0"
 authors = [""]
 
 [addresses]
-contract = "_"
+contract = "0x1a42874787568af30c785622899a27dacce066d671fa487e7fb958d6d0c85077"
 
 [dependencies]
 AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", subdir = "aptos-move/framework/aptos-framework/", rev = "main"}`;
 
 const defaultContract = `module contract::hello {
     use std::string;
-    use aptos_framework::account;
     
     #[view]
     public fun hello(): string::String {
