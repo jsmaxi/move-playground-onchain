@@ -15,6 +15,7 @@ import {
   Github,
   Sun,
   Moon,
+  File,
 } from "lucide-react";
 import {
   Select,
@@ -77,6 +78,23 @@ export const Sidebar = ({
   const [isAccountsExpanded, setIsAccountsExpanded] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [isManifestExpanded, setIsManifestExpanded] = useState(true);
+
+  const [manifestContent, setManifestContent] = useState(`[package]
+name = "movement_playground_onchain"
+version = "1.0.0"
+authors = []
+
+[addresses]
+
+[dev-addresses]
+
+[dependencies.AptosFramework]
+git = "https://github.com/aptos-labs/aptos-core.git"
+rev = "mainnet"
+subdir = "aptos-move/framework/aptos-framework"
+
+[dev-dependencies]`);
 
   useEffect(() => {
     const root = window.document.documentElement;
@@ -108,6 +126,17 @@ export const Sidebar = ({
       return theme === "dark" ? "bg-gray-600" : "hover:bg-gray-100";
     } else {
       return theme === "dark" ? "bg-gray-800" : "hover:bg-gray-50";
+    }
+  };
+
+  const handleManifestClick = () => {
+    if (selectedContract) {
+      onContractSelect({
+        ...selectedContract,
+        content: manifestContent,
+        name: "Move.toml",
+        id: "manifest",
+      });
     }
   };
 
@@ -146,6 +175,31 @@ export const Sidebar = ({
       </Select>
 
       <div className="flex flex-col space-y-4 flex-1 overflow-auto">
+        <div>
+          <button
+            onClick={() => setIsManifestExpanded(!isManifestExpanded)}
+            className="flex items-center text-sm font-medium text-gray-700 mb-2"
+          >
+            {isManifestExpanded ? (
+              <ChevronDown size={16} />
+            ) : (
+              <ChevronRight size={16} />
+            )}
+            Manifest
+          </button>
+
+          {isManifestExpanded && (
+            <div
+              className="group relative rounded-md p-2 hover:bg-gray-50 ml-2 cursor-pointer"
+              onClick={handleManifestClick}
+            >
+              <div className="flex items-center gap-2">
+                <File size={16} />
+                <span className="text-sm">Move.toml</span>
+              </div>
+            </div>
+          )}
+        </div>
         <div>
           <div className="flex items-center justify-between mb-2">
             <button
