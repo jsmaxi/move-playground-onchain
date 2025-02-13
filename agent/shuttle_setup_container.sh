@@ -22,7 +22,11 @@ echo "Verifying installations..."
 git --version
 cargo --version
 
-# install movement cli: https://docs.movementnetwork.xyz/devs/movementcli
+# Install build tools for movement cli
+apt-get install lld clang build-essential
+apt-get install libdw-dev
+
+# Install movement cli: https://docs.movementnetwork.xyz/devs/movementcli
 echo "Installing Movement CLI..."
 git clone https://github.com/movementlabsxyz/aptos-core/ && cd aptos-core
 cargo build -p movement
