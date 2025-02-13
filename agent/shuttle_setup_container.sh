@@ -35,6 +35,10 @@ cargo --version
 # cp target/debug/movement /usr/local/bin/
 # movement --help
 
+apt-get install -y libdw-dev
+apt-get install -y pkg-config libssl-dev
+apt-get install -y build-essential
+
 echo "Set up aptos cli..."
 git clone https://github.com/aptos-labs/aptos-core.git
 cd aptos-core
