@@ -105,6 +105,7 @@ async fn not_found() -> impl IntoResponse {
 }
 
 async fn audit_contract(Json(_payload): Json<ContractCode>) -> Json<VulnerabilitiesResponse> {
+    println!("Audit");
     let audit_response = audit(_payload.code).await;
     println!("Audit response: {}", audit_response);
     let vulnerabilities = vec![];
@@ -112,6 +113,8 @@ async fn audit_contract(Json(_payload): Json<ContractCode>) -> Json<Vulnerabilit
 }
 
 async fn compile_contract(Json(_payload): Json<ContractCode>) -> impl IntoResponse {
+    println!("Compile");
+
     if _payload.code.trim().is_empty() {
         return (
             StatusCode::INTERNAL_SERVER_ERROR,
@@ -136,7 +139,9 @@ async fn compile_contract(Json(_payload): Json<ContractCode>) -> impl IntoRespon
     // Create Move.toml file inside the new folder
     let move_toml_path = new_folder.join("Move.toml");
     let mut move_toml_file = File::create(&move_toml_path).unwrap();
-    move_toml_file.write_all(b"manifest").unwrap();
+    move_toml_file
+        .write_all(_payload.move_toml.as_bytes())
+        .unwrap();
 
     // Create sources folder inside the new folder
     let sources_folder = new_folder.join("sources");
@@ -145,7 +150,9 @@ async fn compile_contract(Json(_payload): Json<ContractCode>) -> impl IntoRespon
     // Create contract.move file inside the sources folder
     let contract_move_path = sources_folder.join("contract.move");
     let mut contract_move_file = File::create(&contract_move_path).unwrap();
-    contract_move_file.write_all(b"hello").unwrap();
+    contract_move_file
+        .write_all(_payload.code.as_bytes())
+        .unwrap();
 
     println!(
         "Contract files and folders created at: {:?}",
@@ -159,29 +166,25 @@ async fn compile_contract(Json(_payload): Json<ContractCode>) -> impl IntoRespon
         .arg("compile")
         .arg("--package-dir")
         .arg(temp_dir.path())
-        .output();
+        .output()
+        .unwrap();
 
-    match output {
-        Ok(o) => {
-            let status: String = if o.status.success() {
-                String::from_utf8_lossy(&o.stdout).to_string()
-            } else {
-                String::from_utf8_lossy(&o.stderr).to_string()
-            };
-
-            (StatusCode::OK, Json(status))
-        }
-        Err(error) => {
-            println!("Compile command error: {}", error);
-            (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json("Command error".to_string()),
-            )
-        }
+    if output.status.success() {
+        (
+            StatusCode::OK,
+            Json(String::from_utf8_lossy(&output.stdout).to_string()),
+        )
+    } else {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(String::from_utf8_lossy(&output.stderr).to_string()),
+        )
     }
 }
 
 async fn deploy_contract(Json(_payload): Json<ContractCode>) -> impl IntoResponse {
+    println!("Deploy");
+
     if _payload.code.trim().is_empty() {
         return (
             StatusCode::INTERNAL_SERVER_ERROR,
@@ -206,7 +209,9 @@ async fn deploy_contract(Json(_payload): Json<ContractCode>) -> impl IntoRespons
     // Create Move.toml file inside the new folder
     let move_toml_path = new_folder.join("Move.toml");
     let mut move_toml_file = File::create(&move_toml_path).unwrap();
-    move_toml_file.write_all(b"manifest").unwrap();
+    move_toml_file
+        .write_all(_payload.move_toml.as_bytes())
+        .unwrap();
 
     // Create sources folder inside the new folder
     let sources_folder = new_folder.join("sources");
@@ -215,7 +220,9 @@ async fn deploy_contract(Json(_payload): Json<ContractCode>) -> impl IntoRespons
     // Create contract.move file inside the sources folder
     let contract_move_path = sources_folder.join("contract.move");
     let mut contract_move_file = File::create(&contract_move_path).unwrap();
-    contract_move_file.write_all(b"hello").unwrap();
+    contract_move_file
+        .write_all(_payload.code.as_bytes())
+        .unwrap();
 
     println!(
         "Contract files and folders created at: {:?}",
@@ -229,25 +236,19 @@ async fn deploy_contract(Json(_payload): Json<ContractCode>) -> impl IntoRespons
         .arg("publish")
         .arg("--package-dir")
         .arg(temp_dir.path())
-        .output();
+        .output()
+        .unwrap();
 
-    match output {
-        Ok(o) => {
-            let status: String = if o.status.success() {
-                String::from_utf8_lossy(&o.stdout).to_string()
-            } else {
-                String::from_utf8_lossy(&o.stderr).to_string()
-            };
-
-            (StatusCode::OK, Json(status))
-        }
-        Err(error) => {
-            println!("Deploy command error: {}", error);
-            (
-                StatusCode::INTERNAL_SERVER_ERROR,
-                Json("Command error".to_string()),
-            )
-        }
+    if output.status.success() {
+        (
+            StatusCode::OK,
+            Json(String::from_utf8_lossy(&output.stdout).to_string()),
+        )
+    } else {
+        (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(String::from_utf8_lossy(&output.stderr).to_string()),
+        )
     }
 }
 
@@ -274,6 +275,7 @@ async fn movement() -> impl IntoResponse {
 }
 
 async fn chat_with_ai(Json(_payload): Json<ChatWithAssistantRequest>) -> Json<String> {
+    println!("Chat");
     let chat_response: String = chat(_payload.question).await;
     println!("Chat response: {}", chat_response);
     Json(chat_response)
