@@ -128,6 +128,29 @@ async fn deploy_contract(Json(_payload): Json<ContractCode>) -> Json<DeployRespo
     Json(DeployResponse { status })
 }
 
+async fn movement() -> impl IntoResponse {
+    let output = Command::new("movement").arg("move").arg("--help").output();
+
+    match output {
+        Ok(o) => {
+            let status: String = if o.status.success() {
+                String::from_utf8_lossy(&o.stdout).to_string()
+            } else {
+                String::from_utf8_lossy(&o.stderr).to_string()
+            };
+
+            (StatusCode::OK, Json(status))
+        }
+        Err(error) => {
+            println!("Command error: {}", error);
+            (
+                StatusCode::INTERNAL_SERVER_ERROR,
+                Json("Command error".to_string()),
+            )
+        }
+    }
+}
+
 async fn chat_with_ai(Json(_payload): Json<ChatRequest>) -> Json<String> {
     // let client = OpenAIClient::new("your-openai-api-key");
     // let response = client.complete(payload.question).await.unwrap();
@@ -143,6 +166,7 @@ async fn axum() -> shuttle_axum::ShuttleAxum {
         .route("/audit", post(audit_contract))
         .route("/compile", post(compile_contract))
         .route("/deploy", post(deploy_contract))
+        .route("/movement", get(movement))
         .route("/chat", post(chat_with_ai))
         .fallback(get(not_found));
     Ok(router.into())
