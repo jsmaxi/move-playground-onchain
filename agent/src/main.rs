@@ -184,13 +184,9 @@ async fn movement() -> impl IntoResponse {
 }
 
 async fn chat_with_ai(Json(_payload): Json<ChatWithAssistantRequest>) -> Json<String> {
-    // let client = OpenAIClient::new("your-openai-api-key");
-    // let response = client.complete(payload.question).await.unwrap();
-    let chat_response = chat(_payload.question).await;
+    let chat_response: String = chat(_payload.question).await;
     println!("Chat response: {}", chat_response);
-    let response = "OK".to_string();
-    //Json(response.choices[0].text)
-    Json(response)
+    Json(chat_response)
 }
 
 async fn chat(question: String) -> String {
@@ -200,7 +196,7 @@ async fn chat(question: String) -> String {
 
     let prompt: String = format!(
         r#"You are blockchain expert specializing in Aptos Move smart contracts. 
-        Answer this question:
+        Answer this question shortly:
         {}
         "#,
         question

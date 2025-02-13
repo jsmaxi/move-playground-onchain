@@ -1,6 +1,6 @@
 "use server";
 
-import { ContractCode } from "./models";
+import { ChatWithAssistantRequest, ContractCode } from "./models";
 
 async function POST(request: string, url: string) {
   try {
@@ -43,5 +43,11 @@ export async function postCompile(code: string, move_toml: string) {
 export async function postDeploy(code: string, move_toml: string) {
   const cc: ContractCode = { code, move_toml };
   const url = process.env.DEPLOY_API_URL ?? "";
+  return await POST(JSON.stringify(cc), url);
+}
+
+export async function postChat(question: string) {
+  const cc: ChatWithAssistantRequest = { question };
+  const url = process.env.CHAT_API_URL ?? "";
   return await POST(JSON.stringify(cc), url);
 }

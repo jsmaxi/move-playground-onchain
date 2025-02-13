@@ -15,7 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { postAudit, postCompile, postDeploy } from "@/lib/server";
+import { postAudit, postChat, postCompile, postDeploy } from "@/lib/server";
 import Loading from "./Loading";
 import {
   ResizablePanelGroup,
@@ -316,23 +316,18 @@ const Index = () => {
     setQuestion("");
     setIsThinking(true);
 
-    // Simulate AI thinking
-    setTimeout(() => {
-      const dummyResponses = [
-        "In Move smart contracts, resource types are a unique feature that enables better asset management. They ensure that values can't be copied or discarded, only moved between storage locations.",
-        "The key difference between Move and Solidity is Move's first-class support for resources. This makes it easier to represent and handle digital assets securely.",
-        "To implement access control in Move, you typically use the `signer` type along with assertion functions. This ensures only authorized accounts can execute certain operations.",
-      ];
-
+    try {
+      console.log(question);
+      const result = await postChat(question);
+      console.log(result);
       const aiMessage = {
         role: "assistant" as const,
-        content:
-          dummyResponses[Math.floor(Math.random() * dummyResponses.length)],
+        content: result,
       };
-
       setMessages((prev) => [...prev, aiMessage]);
+    } finally {
       setIsThinking(false);
-    }, 1500);
+    }
   };
 
   const scrollToBottom = () => {
