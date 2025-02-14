@@ -59,7 +59,7 @@ apt-get install -y libudev-dev
 
 # Install movement cli: https://docs.movementnetwork.xyz/devs/movementcli
 echo "Installing Movement CLI..."
-git clone https://github.com/movementlabsxyz/aptos-core/ && cd aptos-core
+git clone https://github.com/jsmaxi/aptos-core && cd aptos-core
 cargo build -p movement
 cp target/debug/movement /usr/local/bin/
 # movement --help
