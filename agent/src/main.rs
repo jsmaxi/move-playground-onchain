@@ -164,7 +164,7 @@ async fn compile_contract(Json(_payload): Json<ContractCode>) -> impl IntoRespon
 
     println!("Execute command");
 
-    let mut child = Command::new("aptos")
+    let mut child = Command::new("movement")
         .arg("move")
         .arg("compile")
         .arg("--package-dir")
@@ -265,7 +265,7 @@ async fn deploy_contract(Json(_payload): Json<ContractCode>) -> impl IntoRespons
 
     println!("Init");
 
-    let mut _child = Command::new("aptos")
+    let mut _child = Command::new("movement")
         .arg("init")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -283,7 +283,7 @@ async fn deploy_contract(Json(_payload): Json<ContractCode>) -> impl IntoRespons
 
     println!("Execute command");
 
-    let mut child = Command::new("aptos")
+    let mut child = Command::new("movement")
         .arg("move")
         .arg("publish")
         .arg("--package-dir")
@@ -384,7 +384,7 @@ async fn prove_contract(Json(_payload): Json<ContractCode>) -> impl IntoResponse
 
     println!("Dependencies");
 
-    let mut _child = Command::new("aptos")
+    let mut _child = Command::new("movement")
         .arg("update")
         .arg("prover-dependencies")
         .stdin(Stdio::piped())
@@ -397,7 +397,7 @@ async fn prove_contract(Json(_payload): Json<ContractCode>) -> impl IntoResponse
 
     println!("Execute command");
 
-    let mut child = Command::new("aptos")
+    let mut child = Command::new("movement")
         .arg("move")
         .arg("prove")
         .arg("--package-dir")
@@ -448,7 +448,7 @@ async fn prove_contract(Json(_payload): Json<ContractCode>) -> impl IntoResponse
 }
 
 async fn movement() -> impl IntoResponse {
-    let output = Command::new("aptos").arg("move").arg("--help").output();
+    let output = Command::new("movement").arg("move").arg("--help").output();
     match output {
         Ok(o) => {
             let status: String = if o.status.success() {
