@@ -423,7 +423,7 @@ const Index = () => {
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={25} minSize={10} maxSize={50}>
-            <div className="h-full bg-editor-bg p-4 font-mono text-sm text-editor-text overflow-auto">
+            <div className="h-full bg-editor-bg p-4 font-mono text-sm text-editor-text overflow-auto text-gray-400">
               {logs.map((log, index) => (
                 <div key={index} className="mb-1">
                   {log}

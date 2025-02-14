@@ -28,6 +28,15 @@ DEPLOY_API_URL = ""
 
 Fill with Shuttle local or remote endpoint URLs.
 
+For example, when using localhost:
+
+```
+AUDIT_API_URL = "http://127.0.0.1:8000/audit"
+CHAT_API_URL = "http://127.0.0.1:8000/chat"
+COMPILE_API_URL = "http://127.0.0.1:8000/compile"
+DEPLOY_API_URL = "http://127.0.0.1:8000/deploy"
+```
+
 > Agent
 
 ```bash

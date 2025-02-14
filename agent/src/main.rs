@@ -88,6 +88,7 @@ async fn home() -> impl IntoResponse {
                 "POST /audit".to_string(),
                 "POST /compile".to_string(),
                 "POST /deploy".to_string(),
+                "POST /prove".to_string(),
                 "POST /chat".to_string(),
                 "GET /movement".to_string(),
             ],
@@ -332,6 +333,107 @@ async fn deploy_contract(Json(_payload): Json<ContractCode>) -> impl IntoRespons
     (StatusCode::OK, Json(stdout_output))
 }
 
+async fn prove_contract(Json(_payload): Json<ContractCode>) -> impl IntoResponse {
+    println!("Prove");
+
+    if _payload.code.trim().is_empty() {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json("Empty code".to_string()),
+        );
+    }
+
+    if _payload.move_toml.trim().is_empty() {
+        return (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json("Empty manifest".to_string()),
+        );
+    }
+
+    // Create a new temporary directory
+    let temp_dir = tempfile::tempdir().unwrap();
+
+    // Create a new folder inside the temporary directory
+    let new_folder = temp_dir.path().join("new_folder");
+    fs::create_dir(&new_folder).unwrap();
+
+    // Create Move.toml file inside the new folder
+    let move_toml_path = new_folder.join("Move.toml");
+    let mut move_toml_file = File::create(&move_toml_path).unwrap();
+    move_toml_file
+        .write_all(_payload.move_toml.as_bytes())
+        .unwrap();
+
+    // Create sources folder inside the new folder
+    let sources_folder = new_folder.join("sources");
+    fs::create_dir(&sources_folder).unwrap();
+
+    // Create contract.move file inside the sources folder
+    let contract_move_path = sources_folder.join("contract.move");
+    let mut contract_move_file = File::create(&contract_move_path).unwrap();
+    contract_move_file
+        .write_all(_payload.code.as_bytes())
+        .unwrap();
+
+    println!(
+        "Contract files and folders created at: {:?}",
+        temp_dir.path()
+    );
+
+    // The temporary directory and its contents will be automatically deleted when `temp_dir` goes out of scope
+
+    println!("Execute command");
+
+    let mut child = Command::new("aptos")
+        .arg("move")
+        .arg("prove")
+        .arg("--package-dir")
+        .arg(new_folder)
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .expect("Failed to spawn child for command");
+
+    // Capture stdout and stderr
+    let stdout = child.stdout.take().unwrap();
+    let stderr = child.stderr.take().unwrap();
+
+    let stdout_handle = std::thread::spawn(move || {
+        let reader = BufReader::new(stdout);
+        let mut output = String::new();
+        for line in reader.lines() {
+            if let Ok(line) = line {
+                println!("stdout: {}", line);
+                output.push_str(&line);
+                output.push('\n');
+            }
+        }
+        output
+    });
+
+    let _stderr_handle = std::thread::spawn(move || {
+        let reader = BufReader::new(stderr);
+        let mut output = String::new();
+        for line in reader.lines() {
+            if let Ok(line) = line {
+                eprintln!("stderr: {}", line);
+                output.push_str(&line);
+                output.push('\n');
+            }
+        }
+        output
+    });
+
+    // Wait for the child process to finish
+    let _status = child.wait().expect("Failed to wait on child");
+
+    // Join the threads to get the output
+    let stdout_output = stdout_handle.join().unwrap();
+    //let stderr_output = stderr_handle.join().unwrap();
+
+    (StatusCode::OK, Json(stdout_output))
+}
+
 async fn movement() -> impl IntoResponse {
     let output = Command::new("aptos").arg("move").arg("--help").output();
     match output {
@@ -405,6 +507,7 @@ async fn axum(#[shuttle_runtime::Secrets] secrets: SecretStore) -> shuttle_axum:
         .route("/audit", post(audit_contract))
         .route("/compile", post(compile_contract))
         .route("/deploy", post(deploy_contract))
+        .route("/prove", post(prove_contract))
         .route("/movement", get(movement))
         .route("/chat", post(chat_with_ai))
         .fallback(get(not_found));
