@@ -51,12 +51,13 @@ cd aptos-core
 git checkout -f -b aptos-cli-v3.4.1  --track origin/devnet # version <= 3.5 for movement
 git status
 ./scripts/dev_setup.sh -ypt
-source ~/.profile
 source ~/.cargo/env
 # cargo build
 cargo build --package aptos --profile cli
 cp target/cli/aptos /usr/local/bin/
 aptos --help
+aptos update prover-dependencies
+source ~/.profile
 
 # Install movement cli: https://docs.movementnetwork.xyz/devs/movementcli
 # echo "Installing Movement CLI..."
