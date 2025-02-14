@@ -15,7 +15,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { postAudit, postChat, postCompile, postDeploy } from "@/lib/server";
+import {
+  postAudit,
+  postChat,
+  postCompile,
+  postDeploy,
+  postProve,
+} from "@/lib/server";
 import Loading from "./Loading";
 import {
   ResizablePanelGroup,
@@ -243,11 +249,6 @@ const Index = () => {
   };
 
   const handleCompile = async () => {
-    // toast({
-    //   title: "Compiling Smart Contract",
-    //   description: "Contract compiled successfully.",
-    // });
-
     if (!selectedContract) return;
 
     try {
@@ -273,11 +274,6 @@ const Index = () => {
     // };
     // setTransactions([newTransaction, ...transactions]);
 
-    // toast({
-    //   title: "Deploying Smart Contract",
-    //   description: "Please connect your wallet to deploy the contract.",
-    // });
-
     if (!selectedContract) return;
 
     try {
@@ -290,6 +286,24 @@ const Index = () => {
       );
       console.log(result);
       log("Deploy response: " + result);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleProve = async () => {
+    if (!selectedContract) return;
+
+    try {
+      setLoading(true);
+      console.log(selectedContract);
+      log("Proving...");
+      const result = await postProve(
+        selectedContract.content,
+        selectedContract.toml
+      );
+      console.log(result);
+      log("Prove response: " + result);
     } finally {
       setLoading(false);
     }
@@ -433,7 +447,7 @@ const Index = () => {
           </ResizablePanel>
         </ResizablePanelGroup>
 
-        <div className="grid grid-cols-3 gap-4 bg-muted border-t border-border p-2">
+        <div className="grid grid-cols-4 gap-4 bg-muted border-t border-border p-2">
           <Button
             className="py-4 text-base border-r-2 border-gray-300 rounded-none"
             variant="ghost"
@@ -453,13 +467,22 @@ const Index = () => {
             Compile
           </Button>
           <Button
-            className="py-4 text-base border-gray-300 rounded-none"
+            className="py-4 text-base border-r-2 border-gray-300 rounded-none"
             variant="ghost"
             onClick={handleDeploy}
             disabled={isLoading}
           >
             {isLoading && <Loading />}
             Deploy
+          </Button>
+          <Button
+            className="py-4 text-base border-gray-300 rounded-none"
+            variant="ghost"
+            onClick={handleProve}
+            disabled={isLoading}
+          >
+            {isLoading && <Loading />}
+            Prove
           </Button>
         </div>
 

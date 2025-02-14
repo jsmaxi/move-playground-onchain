@@ -24,6 +24,7 @@ AUDIT_API_URL = ""
 CHAT_API_URL = ""
 COMPILE_API_URL = ""
 DEPLOY_API_URL = ""
+PROVE_API_URL = ""
 ```
 
 Fill with Shuttle local or remote endpoint URLs.
@@ -35,6 +36,7 @@ AUDIT_API_URL = "http://127.0.0.1:8000/audit"
 CHAT_API_URL = "http://127.0.0.1:8000/chat"
 COMPILE_API_URL = "http://127.0.0.1:8000/compile"
 DEPLOY_API_URL = "http://127.0.0.1:8000/deploy"
+PROVE_API_URL = "http://127.0.0.1:8000/prove"
 ```
 
 > Agent

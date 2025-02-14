@@ -51,3 +51,9 @@ export async function postChat(question: string) {
   const url = process.env.CHAT_API_URL ?? "";
   return await POST(JSON.stringify(cc), url);
 }
+
+export async function postProve(code: string, move_toml: string) {
+  const cc: ContractCode = { code, move_toml };
+  const url = process.env.PROVE_API_URL ?? "";
+  return await POST(JSON.stringify(cc), url);
+}
