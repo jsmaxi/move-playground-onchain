@@ -6,6 +6,8 @@ Built for both beginners and experienced Move developers.
 
 <img src="./images/movementplayground.png" alt="project logo" width="250" height="100"/>
 
+---
+
 ### Quick Start
 
 > Client
@@ -58,3 +60,19 @@ Open [localhost:8000](http://127.0.0.1:8000/)
 Make sure that .shuttle folder is created in agent root with config.toml file and Shuttle project id set inside: `id = "proj..."`
 
 Also make sure to create Secrets.toml file in agent root and set environment variable inside of it: `OPENAI_API_KEY = "your-api-key"`
+
+---
+
+### Main Features:
+
+- In-browser Move code editor
+- One-click compilation and deployment to Movement network
+- Integrated AI security audit checks for common vulnerabilities and tips
+- AI assistant to help with code generation, debugging and best practices
+- Native MOVE token payments for system actions
+- Move smart contract examples
+- Wallet connect functionality
+
+### Security
+
+This is experimental software. Use at your own risk. Check your smart contracts thoroughly before deploying to Movement mainnet.
