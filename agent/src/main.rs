@@ -17,7 +17,6 @@ use std::{
     io::{BufRead, BufReader, Write},
     process::{Command, Stdio},
 };
-// use tempfile::NamedTempFile;
 
 #[derive(Serialize, Deserialize)]
 struct ContractCode {
@@ -30,10 +29,10 @@ struct ChatWithAssistantRequest {
     question: String,
 }
 
-#[derive(Serialize, Deserialize)]
-struct VulnerabilitiesResponse {
-    vulnerabilities: Vec<String>,
-}
+// #[derive(Serialize, Deserialize)]
+// struct VulnerabilitiesResponse {
+//     vulnerabilities: Vec<String>,
+// }
 
 // #[derive(Serialize, Deserialize)]
 // struct CompileResponse {
@@ -105,12 +104,11 @@ async fn not_found() -> impl IntoResponse {
     )
 }
 
-async fn audit_contract(Json(_payload): Json<ContractCode>) -> Json<VulnerabilitiesResponse> {
+async fn audit_contract(Json(_payload): Json<ContractCode>) -> impl IntoResponse {
     println!("Audit");
     let audit_response = audit(_payload.code).await;
     println!("Audit response: {}", audit_response);
-    let vulnerabilities = vec![];
-    Json(VulnerabilitiesResponse { vulnerabilities })
+    (StatusCode::OK, Json(audit_response))
 }
 
 async fn compile_contract(Json(_payload): Json<ContractCode>) -> impl IntoResponse {

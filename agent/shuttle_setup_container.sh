@@ -58,6 +58,8 @@ cp target/cli/aptos /usr/local/bin/
 aptos --help
 aptos update prover-dependencies
 source ~/.profile
+export BOOGIE_EXE="/root/.local/bin/boogie"
+
 
 # Install movement cli: https://docs.movementnetwork.xyz/devs/movementcli
 # echo "Installing Movement CLI..."
