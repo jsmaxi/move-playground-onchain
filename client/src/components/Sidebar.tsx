@@ -120,14 +120,14 @@ subdir = "aptos-move/framework/aptos-framework"
 
   const openInExplorer = (hash: string) => {
     window.open(
-      `https://explorer.aptoslabs.com/txn/${hash}?network=testnet`,
+      `https://explorer.aptoslabs.com/txn/${hash}?network=devnet`,
       "_blank"
     );
   };
 
   const openAccountInExplorer = (publicKey: string) => {
     window.open(
-      `https://explorer.aptoslabs.com/account/${publicKey}?network=testnet`,
+      `https://explorer.aptoslabs.com/account/${publicKey}?network=devnet`,
       "_blank"
     );
   };

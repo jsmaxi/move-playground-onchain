@@ -118,7 +118,7 @@ const Index = () => {
   const [fontSize, setFontSize] = useState(14);
   const [isLoading, setLoading] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
-  const [credits, setCredits] = useState(1000);
+  const [credits, setCredits] = useState(2000);
 
   const log = (logText: string) => {
     setLogs((prev) => [...prev, `[${new Date().toLocaleString()}] ${logText}`]);
@@ -187,52 +187,6 @@ const Index = () => {
   };
 
   const handleAudit = async () => {
-    // const dummyVulnerabilities = [
-    //   {
-    //     severity: "High",
-    //     description: "Missing access control on critical function",
-    //     location: "Line 15",
-    //   },
-    //   {
-    //     severity: "Medium",
-    //     description: "Potential integer overflow in arithmetic operation",
-    //     location: "Line 23",
-    //   },
-    //   {
-    //     severity: "Low",
-    //     description: "Consider adding event emission for state changes",
-    //     location: "Line 8",
-    //   },
-    // ];
-
-    // toast({
-    //   title: "Smart Contract Audit Results",
-    //   description: (
-    //     <div className="mt-2 space-y-2">
-    //       {dummyVulnerabilities.map((vuln, i) => (
-    //         <div key={i} className="flex items-start gap-2 text-sm">
-    //           <span
-    //             className={`font-medium ${
-    //               vuln.severity === "High"
-    //                 ? "text-red-500"
-    //                 : vuln.severity === "Medium"
-    //                 ? "text-yellow-500"
-    //                 : "text-blue-500"
-    //             }`}
-    //           >
-    //             {vuln.severity}:
-    //           </span>
-    //           <div className="flex-1">
-    //             <p>{vuln.description}</p>
-    //             <p className="text-xs text-muted-foreground">{vuln.location}</p>
-    //           </div>
-    //         </div>
-    //       ))}
-    //     </div>
-    //   ),
-    //   duration: 10000,
-    // });
-
     if (!selectedContract) return;
 
     if (credits < 100) {
@@ -281,13 +235,6 @@ const Index = () => {
   };
 
   const handleDeploy = async () => {
-    // const newTransaction: Transaction = {
-    //   hash: `0x${Math.random().toString(16).substr(2, 64)}`,
-    //   timestamp: new Date().toISOString(),
-    //   status: "pending",
-    // };
-    // setTransactions([newTransaction, ...transactions]);
-
     if (!selectedContract) return;
 
     if (credits < 200) {
@@ -300,12 +247,25 @@ const Index = () => {
       setLoading(true);
       console.log(selectedContract);
       log("Deploying...");
-      const result = await postDeploy(
-        selectedContract.content,
-        selectedContract.toml
-      );
-      console.log(result);
-      log("Deploy response: " + result);
+      // const result = await postDeploy(
+      //   selectedContract.content,
+      //   selectedContract.toml
+      // );
+      // console.log(result);
+      // log("Deploy response: " + result);
+      // Simulate transaction:
+      const newTransaction: Transaction = {
+        hash: `0x${Math.random().toString(16).substr(2, 64)}`,
+        timestamp: new Date().toISOString(),
+        status: "pending",
+      };
+      setTransactions([newTransaction, ...transactions]);
+      await new Promise<void>((resolve) => {
+        setTimeout(() => {
+          resolve();
+        }, 1000);
+      });
+      log("New transaction simulated.");
     } finally {
       setLoading(false);
     }
@@ -466,7 +426,7 @@ const Index = () => {
           <ResizablePanel defaultSize={25} minSize={10} maxSize={50}>
             <div className="h-full bg-editor-bg p-4 font-mono text-sm text-editor-text overflow-auto text-gray-400">
               {logs.map((log, index) => (
-                <div key={index} className="mb-1">
+                <div key={index} className="mb-1 whitespace-pre-line">
                   {log}
                 </div>
               ))}
