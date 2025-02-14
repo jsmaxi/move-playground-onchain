@@ -50,8 +50,7 @@ git clone https://github.com/aptos-labs/aptos-core.git
 cd aptos-core
 git checkout -f -b aptos-cli-v3.4.1  --track origin/devnet # version <= 3.5 for movement
 git status
-./scripts/dev_setup.sh -yp
-source ~/.profile
+./scripts/dev_setup.sh
 source ~/.cargo/env
 # cargo build
 cargo build --package aptos --profile cli
