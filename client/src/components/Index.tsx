@@ -455,7 +455,7 @@ const Index = () => {
             disabled={isLoading}
           >
             {isLoading && <Loading />}
-            Audit
+            Audit AI
           </Button>
           <Button
             className="py-4 text-base border-r-2 border-gray-300 rounded-none"
@@ -498,11 +498,11 @@ const Index = () => {
           </DialogTrigger>
           <DialogContent className="sm:max-w-[425px]">
             <DialogHeader>
-              <DialogTitle>Move Smart Contracts Assistant</DialogTitle>
+              <DialogTitle>Move Smart Contracts AI Assistant</DialogTitle>
             </DialogHeader>
             <div className="flex flex-col gap-4">
               <div className="text-sm text-muted-foreground">
-                Ask your question about Move smart contracts and development.
+                Ask your questions about Move smart contracts and development.
               </div>
               <div className="flex-1 overflow-y-auto max-h-[400px] space-y-4">
                 {messages.map((msg, i) => (
