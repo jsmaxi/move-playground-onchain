@@ -382,28 +382,28 @@ async fn prove_contract(Json(_payload): Json<ContractCode>) -> impl IntoResponse
 
     // The temporary directory and its contents will be automatically deleted when `temp_dir` goes out of scope
 
-    // println!("Dependencies");
+    println!("Dependencies");
 
-    // let mut _child = Command::new("aptos")
-    //     .arg("update")
-    //     .arg("prover-dependencies")
-    //     .stdin(Stdio::piped())
-    //     .stdout(Stdio::piped())
-    //     .stderr(Stdio::piped())
-    //     .spawn()
-    //     .expect("Failed to spawn child for dependencies");
+    let mut _child = Command::new("aptos")
+        .arg("update")
+        .arg("prover-dependencies")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .expect("Failed to spawn child for dependencies");
 
-    // let _output = _child.wait_with_output().unwrap();
+    let _output = _child.wait_with_output().unwrap();
 
-    // let mut _child2 = Command::new("source")
-    //     .arg("~/.profile")
-    //     .stdin(Stdio::piped())
-    //     .stdout(Stdio::piped())
-    //     .stderr(Stdio::piped())
-    //     .spawn()
-    //     .expect("Failed to spawn child for source");
+    let mut _child2 = Command::new("source")
+        .arg("~/.profile")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .expect("Failed to spawn child for source");
 
-    // let _output2 = _child2.wait_with_output().unwrap();
+    let _output2 = _child2.wait_with_output().unwrap();
 
     println!("Execute command");
 
