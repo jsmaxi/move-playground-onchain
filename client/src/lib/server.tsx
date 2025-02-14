@@ -15,10 +15,13 @@ async function POST(request: string, url: string) {
       body: request,
     });
 
-    const result = await apiResponse.json();
     if (!apiResponse.ok) {
-      throw new Error(`API Error: ${apiResponse.status} ${result}`);
+      throw new Error(
+        `API Error: ${apiResponse.status} ${apiResponse.statusText} - check console and contact support for details.`
+      );
     }
+
+    const result = await apiResponse.json();
 
     console.error("Success:", result);
     return result;

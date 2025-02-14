@@ -22,6 +22,9 @@ echo "Verifying installations..."
 git --version
 cargo --version
 
+# Clean cargo
+cargo clean
+
 # # Install build tools for movement cli
 # echo "Installing build tools..."
 # apt-get install -y lld clang build-essential
