@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Image from "next/image";
+import { WalletConnector } from "@aptos-labs/wallet-adapter-mui-design";
 
 interface Contract {
   id: string;
@@ -149,10 +150,9 @@ subdir = "aptos-move/framework/aptos-framework"
         </h1>
       </div>
 
-      <Button variant="outline" className="mb-2 w-full justify-start gap-2">
-        <span className="h-2 w-2 rounded-full bg-gray-400"></span>
-        Connect
-      </Button>
+      <div className="mb-2 w-full">
+        <WalletConnector />
+      </div>
 
       <div className="mb-4 text-sm text-muted-foreground">Move Testnet</div>
 
