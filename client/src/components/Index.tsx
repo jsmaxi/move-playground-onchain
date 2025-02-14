@@ -28,6 +28,7 @@ import {
   ResizablePanel,
   ResizableHandle,
 } from "@/components/ui/resizable";
+import Image from "next/image";
 
 interface Contract {
   id: string;
@@ -117,6 +118,7 @@ const Index = () => {
   const [fontSize, setFontSize] = useState(14);
   const [isLoading, setLoading] = useState(false);
   const [logs, setLogs] = useState<string[]>([]);
+  const [credits, setCredits] = useState(1000);
 
   const log = (logText: string) => {
     setLogs((prev) => [...prev, `[${new Date().toLocaleString()}] ${logText}`]);
@@ -233,6 +235,12 @@ const Index = () => {
 
     if (!selectedContract) return;
 
+    if (credits < 100) {
+      log("Insufficient MOVE tokens. You need 100 MOVE tokens to audit.");
+      return;
+    }
+    setCredits((prev) => prev - 100);
+
     try {
       setLoading(true);
       console.log(selectedContract);
@@ -250,6 +258,12 @@ const Index = () => {
 
   const handleCompile = async () => {
     if (!selectedContract) return;
+
+    if (credits < 50) {
+      log("Insufficient MOVE tokens. You need 50 MOVE tokens to compile.");
+      return;
+    }
+    setCredits((prev) => prev - 50);
 
     try {
       setLoading(true);
@@ -276,6 +290,12 @@ const Index = () => {
 
     if (!selectedContract) return;
 
+    if (credits < 200) {
+      log("Insufficient MOVE tokens. You need 200 MOVE tokens to deploy.");
+      return;
+    }
+    setCredits((prev) => prev - 200);
+
     try {
       setLoading(true);
       console.log(selectedContract);
@@ -293,6 +313,12 @@ const Index = () => {
 
   const handleProve = async () => {
     if (!selectedContract) return;
+
+    if (credits < 100) {
+      log("Insufficient MOVE tokens. You need 100 MOVE tokens to use prover.");
+      return;
+    }
+    setCredits((prev) => prev - 100);
 
     try {
       setLoading(true);
@@ -374,6 +400,7 @@ const Index = () => {
         onSetActiveAccount={setActiveAccount}
         exampleContracts={exampleContracts}
         onLoadExample={loadExampleContract}
+        credits={credits}
       />
       <main className="flex flex-col flex-1 overflow-hidden">
         <ResizablePanelGroup direction="vertical" className="flex-1">
@@ -456,6 +483,10 @@ const Index = () => {
           >
             {isLoading && <Loading />}
             Audit AI
+            <div className="flex items-center gap-1 text-sm font-medium text-gray-400 ml-4">
+              <Image src={"/movement.png"} alt="MOVE" width={10} height={10} />
+              <span>100</span>
+            </div>
           </Button>
           <Button
             className="py-4 text-base border-r-2 border-gray-300 rounded-none"
@@ -465,6 +496,10 @@ const Index = () => {
           >
             {isLoading && <Loading />}
             Compile
+            <div className="flex items-center gap-1 text-sm font-medium text-gray-400 ml-4">
+              <Image src={"/movement.png"} alt="MOVE" width={10} height={10} />
+              <span>50</span>
+            </div>
           </Button>
           <Button
             className="py-4 text-base border-r-2 border-gray-300 rounded-none"
@@ -474,6 +509,10 @@ const Index = () => {
           >
             {isLoading && <Loading />}
             Deploy
+            <div className="flex items-center gap-1 text-sm font-medium text-gray-400 ml-4">
+              <Image src={"/movement.png"} alt="MOVE" width={10} height={10} />
+              <span>200</span>
+            </div>
           </Button>
           <Button
             className="py-4 text-base border-gray-300 rounded-none"
@@ -483,6 +522,10 @@ const Index = () => {
           >
             {isLoading && <Loading />}
             Prove
+            <div className="flex items-center gap-1 text-sm font-medium text-gray-400 ml-4">
+              <Image src={"/movement.png"} alt="MOVE" width={10} height={10} />
+              <span>100</span>
+            </div>
           </Button>
         </div>
 
