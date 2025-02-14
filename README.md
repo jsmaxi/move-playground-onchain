@@ -4,7 +4,7 @@ An interactive development environment for experimenting with Move smart contrac
 
 Built for both beginners and experienced Move developers.
 
-[logo](./images/movementplayground.png)
+<img src="./images/movementplayground.png" alt="project logo" width="250" height="100"/>
 
 ### Quick Start
 
