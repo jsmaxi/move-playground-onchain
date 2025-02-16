@@ -6,8 +6,6 @@ Built for both beginners and experienced Move developers.
 
 <img src="./images/movementplayground.png" alt="project logo" width="250" height="100"/>
 
----
-
 Presentation: https://www.loom.com/share/9caafeb3010c4394bd242f6e66c63f57
 
 Pitch Deck: https://pitch.com/v/move-playground-innovates-development-environment-kn8ps8/94991dac-a51f-4102-a517-6b9bf5e9d7c2 
